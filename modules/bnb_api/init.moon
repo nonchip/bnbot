@@ -12,6 +12,11 @@ class Api
   getExchangeInfo: =>
     @exchange_info = @request '/api/v1/exchangeInfo'
     @heatup 1
+  time: =>
+    ret,err=@request '/api/v1/time'
+    @heatup 1
+    return nil,(err or 'time missing') unless ret and ret.serverTime
+    return ret.serverTime
   heatup: (m,t='REQUESTS') =>
     seconds=0
     for l in *@exchange_info.rateLimits
@@ -22,7 +27,7 @@ class Api
           when 'HOUR' then 60*60
           when 'DAY' then 60*60*24
         seconds += is/l.limit
-    @cooldown_t += m*seconds
+    @cooldown_t += math.max m*seconds, 1
   do_cooldowns: (max=nil)=>
     max or=@cooldown_t
     wait = math.ceil math.min(@cooldown_t, max)

@@ -5,3 +5,5 @@
 /.continue_*
 /th
 /bnbot
+/*.loss
+/*.net
