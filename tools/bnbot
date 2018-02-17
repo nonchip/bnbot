@@ -1,0 +1,3 @@
+#!/bin/bash
+cd $BNBOT_PATH
+exec th init.lua "$@"
