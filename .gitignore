@@ -1,0 +1,7 @@
+*.lua
+/.root
+/.src
+/.run
+/.continue_*
+/th
+/bnbot
