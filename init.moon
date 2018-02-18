@@ -146,7 +146,7 @@ main=->
     stdscr\attroff curses.A_REVERSE
     ldir=dirarrow(output,input,1)..' '
     hdir=dirarrow(output,input,2)..' '
-    tdir=dirarrow(output,input,3)..' '
+    tdir=dirarrow(output/10,input/10,3)..' '
     stdscr\mvaddstr 7, 42, 'LOW:     '..ldir..tostring(output[seqlen-1][1][1])..'               '
     stdscr\mvaddstr 8, 42, 'HIGH:    '..hdir..tostring(output[seqlen-1][1][2])..'               '
     stdscr\mvaddstr 9, 42, '#TRADES: '..tdir..tostring(output[seqlen-1][1][3])..'               '
