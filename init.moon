@@ -89,10 +89,11 @@ main=->
       inp\select(3, i)\mul tonumber s[i]
 
   dirarrow=(output,input,n)->
-    c=input[seqlen-2][1][n]/scale[n]
-    if output[seqlen-1][1][n] > c*1.01
+    a=output[seqlen-1][1][n]*scale[n]
+    b=input[seqlen-2][1][n]
+    if a > b*1.01
       '▲'
-    elseif output[seqlen-1][1][n] < c*0.99
+    elseif a < b*0.99
       '▼'
     else
       ' '
