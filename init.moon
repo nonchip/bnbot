@@ -89,7 +89,7 @@ main=->
       inp\select(3, i)\mul tonumber s[i]
 
   dirarrow=(output,input,n)->
-    a=output[seqlen-1][1][n]*scale[n]
+    a=output[seqlen-1][1][n]
     b=input[seqlen-2][1][n]
     if a > b*1.01
       '▲'
@@ -137,19 +137,21 @@ main=->
       api\cooldown cdtime\time!.real
     --if loss < input[seqlen-2][1][1]
     output = torch.cat nullrow,input\narrow(1,2,seqlen-2),1
+    ldir,hdir,tdir='','',''
+    o2=input\clone!
     for i=1,5
       output = net\forward output
-    --print 'PREDICTION 5m:', unpack output[seqlen-1][1]
+      ldir..=dirarrow(output,o2,1)
+      hdir..=dirarrow(output,o2,2)
+      tdir..=dirarrow(output/10,o2/10,3)
+      o2=output\clone!
     doscale output, false
     stdscr\attron curses.A_REVERSE if loss*scale[1] < input[seqlen-2][1][1]
     stdscr\mvaddstr 6, 40, 'PREDICTION:'
     stdscr\attroff curses.A_REVERSE
-    ldir=dirarrow(output,input,1)..' '
-    hdir=dirarrow(output,input,2)..' '
-    tdir=dirarrow(output/10,input/10,3)..' '
-    stdscr\mvaddstr 7, 42, 'LOW:     '..ldir..tostring(output[seqlen-1][1][1])..'               '
-    stdscr\mvaddstr 8, 42, 'HIGH:    '..hdir..tostring(output[seqlen-1][1][2])..'               '
-    stdscr\mvaddstr 9, 42, '#TRADES: '..tdir..tostring(output[seqlen-1][1][3])..'               '
+    stdscr\mvaddstr 7, 42, 'LOW:     '..ldir..' '..tostring(output[seqlen-1][1][1])..'               '
+    stdscr\mvaddstr 8, 42, 'HIGH:    '..hdir..' '..tostring(output[seqlen-1][1][2])..'               '
+    stdscr\mvaddstr 9, 42, '#TRADES: '..tdir..' '..tostring(output[seqlen-1][1][3])..'               '
     stdscr\mvaddstr 2, 0, 'API:'
     stdscr\move 0,0
     stdscr\refresh!
