@@ -88,7 +88,7 @@ main=->
     for i=1,featsize
       inp\select(3, i)\mul tonumber s[i]
 
-  dirarrow=(output,input,n,mul=0.05)->
+  dirarrow=(output,input,n,mul=0.01)->
     a=output[seqlen-1][1][n]
     b=input[seqlen-2][1][n]
     if a > b*(1+mul)
@@ -141,9 +141,9 @@ main=->
     o2=output\clone!
     for i=1,5
       output = net\forward output
-      ldir..=dirarrow(output,o2,1,0.01)
-      hdir..=dirarrow(output,o2,2,0.01)
-      tdir..=dirarrow(output/10,o2/10,3,0.01)
+      ldir..=dirarrow(output,o2,1,0.005)
+      hdir..=dirarrow(output,o2,2,0.005)
+      tdir..=dirarrow(output/10,o2/10,3,0.005)
       o2=output\clone!
     cldir=dirarrow output,input,1
     chdir=dirarrow output,input,2
