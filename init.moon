@@ -21,7 +21,7 @@ main=->
     stdscr\move 0,0
     stdscr\refresh!
 
-  seqlen = 60
+  seqlen = 180
   batchsize = 1
   featsize = 3
 
@@ -35,9 +35,9 @@ main=->
     (with nn.Sequential!
       --\add nn.Sequencer nn.Linear featsize, hiddenSize
       \add nn.SeqLSTM featsize, hiddenSize
-      \add nn.SeqLSTM hiddenSize, hiddenSize
-      \add nn.SeqLSTM hiddenSize, hiddenSize
-      \add nn.Sequencer nn.Linear hiddenSize, featsize),{}
+      \add nn.SeqLSTM hiddenSize, hiddenSize/2
+      \add nn.SeqLSTM hiddenSize/2, hiddenSize/4
+      \add nn.Sequencer nn.Linear hiddenSize/4, featsize),{}
 
 
   net\cuda!
@@ -88,12 +88,12 @@ main=->
     for i=1,featsize
       inp\select(3, i)\mul tonumber s[i]
 
-  dirarrow=(output,input,n)->
+  dirarrow=(output,input,n,mul=0.05)->
     a=output[seqlen-1][1][n]
     b=input[seqlen-2][1][n]
-    if a > b*1.005
+    if a > b*(1+mul)
       '▲'
-    elseif a < b*0.995
+    elseif a < b*(1-mul)
       '▼'
     else
       ' '
@@ -141,15 +141,15 @@ main=->
     o2=output\clone!
     for i=1,5
       output = net\forward output
-      ldir..=dirarrow(output,o2,1)
-      hdir..=dirarrow(output,o2,2)
-      tdir..=dirarrow(output/10,o2/10,3)
+      ldir..=dirarrow(output,o2,1,0.01)
+      hdir..=dirarrow(output,o2,2,0.01)
+      tdir..=dirarrow(output/10,o2/10,3,0.01)
       o2=output\clone!
     cldir=dirarrow output,input,1
     chdir=dirarrow output,input,2
     ctdir=dirarrow output/10,input/10,3
     doscale output, false
-    stdscr\attron curses.A_REVERSE if loss*scale[1] < input[seqlen-2][1][1]
+    stdscr\attron curses.A_REVERSE if loss*scale[1]*1000 < input[seqlen-2][1][1]
     stdscr\mvaddstr 6, 40, 'PREDICTION:'
     stdscr\attroff curses.A_REVERSE
     stdscr\mvaddstr 7, 42, chdir..' LOW:     '..ldir..' '..tostring(output[seqlen-1][1][1])..'               '
