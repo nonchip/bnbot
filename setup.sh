@@ -61,9 +61,17 @@ case $continue_stage in
     echo "moonscript" > "$BNBOT_PATH/.continue_stage"
     $BNBOT_ROOT/bin/luarocks install moonscript || exit
     ;&
+  curses)
+    echo "curses" > "$BNBOT_PATH/.continue_stage"
+    $BNBOT_ROOT/bin/luarocks install lcurses || exit
+    ;&
   websocket)
     echo "websocket" > "$BNBOT_PATH/.continue_stage"
     $BNBOT_ROOT/bin/luarocks install lua-websockets || exit
+    ;&
+  luasec)
+    echo "luasec" > "$BNBOT_PATH/.continue_stage"
+    $BNBOT_ROOT/bin/luarocks install luasec || exit
     ;&
   torch_modules)
     echo "torch_modules" > "$BNBOT_PATH/.continue_stage"
