@@ -21,7 +21,7 @@ main=->
     stdscr\move 0,0
     stdscr\refresh!
 
-  seqlen = 60
+  seqlen = 180
   batchsize = 1
   featsize = 3
 
@@ -108,9 +108,9 @@ main=->
         scale[i]=input\select(3,i)\max!
       scale\cinv!
       doscale input, true
-      stdscr\mvaddstr 10, 5, tostring(scale[1])..'       '
-      stdscr\mvaddstr 11, 5, tostring(scale[2])..'       '
-      stdscr\mvaddstr 12, 5, tostring(scale[3])..'       '
+      stdscr\mvaddstr 10, 5, tostring(scale[1])..'            '
+      stdscr\mvaddstr 11, 5, tostring(scale[2])..'            '
+      stdscr\mvaddstr 12, 5, tostring(scale[3])..'            '
       stdscr\move 0,0
       stdscr\refresh!
       target = torch.cat nullrow, input\narrow(1,2,seqlen-2),1
@@ -132,7 +132,12 @@ main=->
     --print 'PREDICTION 5m:', unpack output[seqlen-1][1]
     doscale output, false
     stdscr\attron curses.A_REVERSE if loss*scale[1] < input[seqlen-2][1][1]
-    stdscr\mvaddstr 6, 40, 'PREDICTION:'
+    stdscr\mvaddstr 6, 40, 'PREDICTION:'.. if output[seqlen-1][1][1] > input[seqlen-2][1][1]/scale[1]*1.01
+      '   ▲'
+    elseif output[seqlen-1][1][1] < input[seqlen-2][1][1]/scale[1]*0.99
+      '   ▼'
+    else
+      ''
     stdscr\attroff curses.A_REVERSE
     stdscr\mvaddstr 7, 42, 'LOW: '..tostring(output[seqlen-1][1][1])..'               '
     stdscr\mvaddstr 8, 42, 'HIGH: '..tostring(output[seqlen-1][1][2])..'               '
