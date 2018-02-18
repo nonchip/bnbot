@@ -131,6 +131,9 @@ main=->
       output = net\forward output
     --print 'PREDICTION 5m:', unpack output[seqlen-1][1]
     doscale output, false
+    stdscr\attron curses.A_REVERSE if loss < input[seqlen-2][1][1]
+    stdscr\mvaddstr 6, 40, 'PREDICTION:'
+    stdscr\attroff curses.A_REVERSE
     stdscr\mvaddstr 7, 42, 'LOW: '..tostring(output[seqlen-1][1][1])..'               '
     stdscr\mvaddstr 8, 42, 'HIGH: '..tostring(output[seqlen-1][1][2])..'               '
     stdscr\mvaddstr 9, 42, '#TRADES: '..tostring(output[seqlen-1][1][3])..'               '
