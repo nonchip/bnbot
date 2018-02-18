@@ -138,7 +138,7 @@ main=->
     --if loss < input[seqlen-2][1][1]
     output = torch.cat nullrow,input\narrow(1,2,seqlen-2),1
     ldir,hdir,tdir='','',''
-    o2=input\clone!
+    o2=output\clone!
     for i=1,5
       output = net\forward output
       ldir..=dirarrow(output,o2,1)
