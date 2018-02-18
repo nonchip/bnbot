@@ -10,12 +10,14 @@ torch.setdefaulttensortype('torch.CudaTensor')
 Api = require 'bnb_api'
 Klines = require 'bnb_api.klines'
 
+symbol=arg[1]
+
 main=->
   stdscr = curses.initscr!
   stdscr\clear!
 
   status=(arg)->
-    stdscr\mvaddstr 0, 1, arg..'                                                                 '
+    stdscr\mvaddstr 0, 1, symbol..'   '..arg..'                                                                 '
     stdscr\move 0,0
     stdscr\refresh!
 
@@ -25,9 +27,9 @@ main=->
 
   hiddenSize = 100
 
-  net,optimstate = if io.open(arg[1]..'.net','r')
-    status 'loading net '..arg[1]..'.net'
-    unpack torch.load arg[1]..'.net'
+  net,optimstate = if io.open(symbol..'.net','r')
+    status 'loading net '..symbol..'.net'
+    unpack torch.load symbol..'.net'
   else
     status 'creating new net'
     (with nn.Sequential!
@@ -45,7 +47,7 @@ main=->
 
   api=Api!
   api\do_cooldowns!
-  lines=Klines api, arg[1]
+  lines=Klines api, symbol
   input = torch.Tensor seqlen, batchsize, featsize
   input\zero!
   input\cuda!
@@ -55,7 +57,7 @@ main=->
   local target, loss
   cdtime=torch.Timer!
   savecounter=5
-  lossfile=io.open arg[1]..'.loss', 'a'
+  lossfile=io.open symbol..'.loss', 'a'
   lossstr=''
 
   optimx,dldx = net\getParameters!
@@ -138,8 +140,8 @@ main=->
     savecounter-=1
     if savecounter == 0
       savecounter=5
-      status 'saving net '..arg[1]..'.net and loss '..arg[1]..'.loss'
-      torch.save arg[1]..'.net', {net,optimstate}
+      status 'saving net '..symbol..'.net and loss '..symbol..'.loss'
+      torch.save symbol..'.net', {net,optimstate}
       lossfile\write lossstr
       lossstr=''
       lossfile\flush!
