@@ -145,13 +145,16 @@ main=->
       hdir..=dirarrow(output,o2,2)
       tdir..=dirarrow(output/10,o2/10,3)
       o2=output\clone!
+    cldir=dirarrow output,input,1
+    chdir=dirarrow output,input,2
+    ctdir=dirarrow output/10,input/10,3
     doscale output, false
     stdscr\attron curses.A_REVERSE if loss*scale[1] < input[seqlen-2][1][1]
     stdscr\mvaddstr 6, 40, 'PREDICTION:'
     stdscr\attroff curses.A_REVERSE
-    stdscr\mvaddstr 7, 42, 'LOW:     '..ldir..' '..tostring(output[seqlen-1][1][1])..'               '
-    stdscr\mvaddstr 8, 42, 'HIGH:    '..hdir..' '..tostring(output[seqlen-1][1][2])..'               '
-    stdscr\mvaddstr 9, 42, '#TRADES: '..tdir..' '..tostring(output[seqlen-1][1][3])..'               '
+    stdscr\mvaddstr 7, 42, chdir..' LOW:     '..ldir..' '..tostring(output[seqlen-1][1][1])..'               '
+    stdscr\mvaddstr 8, 42, cldir..' HIGH:    '..hdir..' '..tostring(output[seqlen-1][1][2])..'               '
+    stdscr\mvaddstr 9, 42, ctdir..' #TRADES: '..tdir..' '..tostring(output[seqlen-1][1][3])..'               '
     stdscr\mvaddstr 2, 0, 'API:'
     stdscr\move 0,0
     stdscr\refresh!
