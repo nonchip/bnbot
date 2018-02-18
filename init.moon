@@ -88,6 +88,15 @@ main=->
     for i=1,featsize
       inp\select(3, i)\mul tonumber s[i]
 
+  dirarrow=(output,input,n)->
+    c=input[seqlen-2][1][n]/scale[n]
+    if output[seqlen-1][1][n] > c*1.01
+      '▲'
+    elseif output[seqlen-1][1][n] < c*0.99
+      '▼'
+    else
+      ' '
+
   while true
     for line in lines\next
       break if #line.tbl==0
@@ -132,16 +141,14 @@ main=->
     --print 'PREDICTION 5m:', unpack output[seqlen-1][1]
     doscale output, false
     stdscr\attron curses.A_REVERSE if loss*scale[1] < input[seqlen-2][1][1]
-    stdscr\mvaddstr 6, 40, 'PREDICTION:'.. if output[seqlen-1][1][1] > input[seqlen-2][1][1]/scale[1]*1.01
-      '   ▲'
-    elseif output[seqlen-1][1][1] < input[seqlen-2][1][1]/scale[1]*0.99
-      '   ▼'
-    else
-      ''
+    stdscr\mvaddstr 6, 40, 'PREDICTION:'
     stdscr\attroff curses.A_REVERSE
-    stdscr\mvaddstr 7, 42, 'LOW: '..tostring(output[seqlen-1][1][1])..'               '
-    stdscr\mvaddstr 8, 42, 'HIGH: '..tostring(output[seqlen-1][1][2])..'               '
-    stdscr\mvaddstr 9, 42, '#TRADES: '..tostring(output[seqlen-1][1][3])..'               '
+    ldir=dirarrow(output,input,1)..' '
+    hdir=dirarrow(output,input,2)..' '
+    tdir=dirarrow(output,input,3)..' '
+    stdscr\mvaddstr 7, 42, 'LOW:     '..ldir..tostring(output[seqlen-1][1][1])..'               '
+    stdscr\mvaddstr 8, 42, 'HIGH:    '..hdir..tostring(output[seqlen-1][1][2])..'               '
+    stdscr\mvaddstr 9, 42, '#TRADES: '..tdir..tostring(output[seqlen-1][1][3])..'               '
     stdscr\mvaddstr 2, 0, 'API:'
     stdscr\move 0,0
     stdscr\refresh!
