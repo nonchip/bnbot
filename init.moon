@@ -21,7 +21,7 @@ main=->
     stdscr\move 0,0
     stdscr\refresh!
 
-  seqlen = 180
+  seqlen = 60
   batchsize = 1
   featsize = 3
 
@@ -91,9 +91,9 @@ main=->
   dirarrow=(output,input,n)->
     a=output[seqlen-1][1][n]
     b=input[seqlen-2][1][n]
-    if a > b*1.01
+    if a > b*1.005
       '▲'
-    elseif a < b*0.99
+    elseif a < b*0.995
       '▼'
     else
       ' '
