@@ -146,7 +146,7 @@ main=->
         else
           '▲'
       lastloss=loss
-      stdscr\mvaddstr 3, 42, plossdir..lossdir..' LOSS:    '..string.format('%.10f',loss)..'               '
+      stdscr\mvaddstr 3, 42, plossdir..lossdir..' LOSS: '..string.format('%.10f',loss)..'               '
       stdscr\mvaddstr 4, 42, 'LAST IN: '..string.format('%.10f',input[seqlen-2][1][1]/scale[1])..'               '
       stdscr\mvaddstr 7, 2, 'COOLDOWN: '..tostring(math.ceil(api.cooldown_t*100)/100)..'       '
       stdscr\move 0,0
@@ -159,7 +159,7 @@ main=->
       else
         '▲'
     lastploss=loss
-    stdscr\mvaddstr 3, 42, plossdir..lossdir..' LOSS:    '..string.format('%.10f',loss)..'               '
+    stdscr\mvaddstr 3, 42, plossdir..lossdir..' LOSS: '..string.format('%.10f',loss)..'               '
     output = torch.cat nullrow,input\narrow(1,2,seqlen-2),1
     ldir,hdir,tdir='','',''
     o2=output\clone!
