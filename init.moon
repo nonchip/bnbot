@@ -176,8 +176,16 @@ main=->
     stdscr\attron curses.A_REVERSE if loss*scale[1] < input[seqlen-2][1][1]
     stdscr\mvaddstr 6, 40, 'PREDICTION:'
     stdscr\attroff curses.A_REVERSE
-    lp=math.abs math.floor((output[seqlen-1][1][1]-input[seqlen-2][1][1]/scale[1])/(input[seqlen-2][1][1]/scale[1])*10000)/100
-    hp=math.abs math.floor((output[seqlen-1][1][2]-input[seqlen-2][1][2]/scale[2])/(input[seqlen-2][1][2]/scale[2])*10000)/100
+    lp=math.floor((output[seqlen-1][1][1]-input[seqlen-2][1][1]/scale[1])/(input[seqlen-2][1][1]/scale[1])*10000)/100
+    hp=math.floor((output[seqlen-1][1][2]-input[seqlen-2][1][2]/scale[2])/(input[seqlen-2][1][2]/scale[2])*10000)/100
+    if lp<0
+      lp='-' .. tostring math.abs lp
+    else
+      lp='+' .. tostring math.abs lp
+    if hp<0
+      hp='-' .. tostring math.abs hp
+    else
+      hp='+' .. tostring math.abs hp
     stdscr\mvaddstr 7, 42, chdir..' LOW:     '..ldir..' '..string.format('%.10f',output[seqlen-1][1][1])..'  '..lp..'%               '
     stdscr\mvaddstr 8, 42, cldir..' HIGH:    '..hdir..' '..string.format('%.10f',output[seqlen-1][1][2])..'  '..hp..'%               '
     stdscr\mvaddstr 9, 42, ctdir..' #TRADES: '..tdir..' '..string.format('%.10f',output[seqlen-1][1][3])..'                 '
