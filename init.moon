@@ -25,7 +25,13 @@ main=->
   batchsize = 1
   featsize = 3
 
-  hiddenSize = 100
+  hiddenSizes = {
+    featsize*featsize
+    featsize*featsize*featsize
+    featsize*featsize*featsize*featsize
+    featsize*featsize*featsize
+    featsize*featsize
+  }
 
   net,optimstate = if io.open(symbol..'.net','r')
     status 'loading net '..symbol..'.net'
@@ -34,10 +40,10 @@ main=->
     status 'creating new net'
     (with nn.Sequential!
       --\add nn.Sequencer nn.Linear featsize, hiddenSize
-      \add nn.SeqLSTM featsize, hiddenSize
-      \add nn.SeqLSTM hiddenSize, hiddenSize/2
-      \add nn.SeqLSTM hiddenSize/2, hiddenSize/4
-      \add nn.Sequencer nn.Linear hiddenSize/4, featsize),{}
+      \add nn.SeqLSTM featsize, hiddenSizes[1]
+      for i=1,#hiddenSizes-1
+        \add nn.SeqLSTM hiddenSizes[i], hiddenSizes[i+1]
+      \add nn.Sequencer nn.Linear hiddenSizes[#hiddenSizes], featsize),{}
 
 
   net\cuda!
@@ -98,6 +104,8 @@ main=->
     else
       ' '
 
+  lastloss=-1
+
   while true
     for line in lines\next
       break if #line.tbl==0
@@ -129,7 +137,14 @@ main=->
       optim.adadelta(feval,optimx,optimstate)
       lossstr..= tostring(loss)..'\n'
       --print 'TRAINING loss:',loss, 'input:',input[seqlen-2][1][1]
-      stdscr\mvaddstr 3, 42, 'LOSS:    '..tostring(loss)..'               '
+      dir=' '
+      if lastloss>-1
+        dir=if loss<lastloss
+          '▼'
+        else
+          '▲'
+      lastloss=loss
+      stdscr\mvaddstr 3, 42, dir..' LOSS:    '..tostring(loss)..'               '
       stdscr\mvaddstr 4, 42, 'LAST IN: '..tostring(input[seqlen-2][1][1]/scale[1])..'               '
       stdscr\mvaddstr 7, 2, 'COOLDOWN: '..tostring(math.ceil(api.cooldown_t*100)/100)..'       '
       stdscr\move 0,0
@@ -149,7 +164,7 @@ main=->
     chdir=dirarrow output,input,2
     ctdir=dirarrow output/10,input/10,3
     doscale output, false
-    stdscr\attron curses.A_REVERSE if loss*scale[1]*1000 < input[seqlen-2][1][1]
+    stdscr\attron curses.A_REVERSE if loss*scale[1] < input[seqlen-2][1][1]
     stdscr\mvaddstr 6, 40, 'PREDICTION:'
     stdscr\attroff curses.A_REVERSE
     stdscr\mvaddstr 7, 42, chdir..' LOW:     '..ldir..' '..tostring(output[seqlen-1][1][1])..'               '
